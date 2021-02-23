@@ -1,5 +1,5 @@
 <template>
-  <div id="app1">
+  <div id="app1" style="font-size:13px">
     <v-app id="inspire">
       <v-row justify="space-around">
         <v-col cols="auto">
@@ -30,9 +30,20 @@
                 </v-toolbar>
                 <div
                   class="modal-action"
-                  style="height:40px;background-color:#ededed;display:flex"
+                  id="action-tool"
+                  style="height:28px;background-color:#ededed;display:flex"
                 >
-                  <div @click="show = true">
+                  <v-btn text
+                    ><img src="@/assets/icon/SaveAdd16.png" /> Thêm</v-btn
+                  >
+                  <v-btn text><img src="@/assets/icon/Edit16.png" /> Sửa</v-btn>
+                  <v-btn text @click="saveForm"
+                    ><img src="@/assets/icon/Save16.png" /> Cất</v-btn
+                  >
+                  <v-btn text
+                    ><img src="@/assets/icon/icons8-delete-26.png" /> Xóa</v-btn
+                  >
+                  <!-- <div @click="show = true">
                     <img src="@/assets/icon/SaveAdd16.png" />
                     <span>Thêm</span>
                   </div>
@@ -40,28 +51,34 @@
                     <img src="@/assets/icon/Edit16.png" />
                     <span>Sửa</span>
                   </div>
-                  <div @click="saveForm">
-                    <img src="@/assets/icon/Save16.png" />
-                    <span>Cất</span>
-                  </div>
-                  <div>
+
+                  <v-btn text @click="saveFormm"
+                    ><img src="@/assets/icon/Save16.png" /> Cất</v-btn
+                  >
+
+                  <div class="v-card__text" @click="saveFormm">
                     <img src="@/assets/icon/icons8-delete-26.png" />
                     <span>Xóa</span>
                   </div>
                   <div>
                     <p class="sprite"></p>
                     <span>Nạp</span>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="form-container">
                   <div class="form">
                     <div class="field">
                       <div class="label">
                         <span>Mã Nhân Viên</span>
-                        <span class="required">(*)</span>
+                        <span class="required"> (*) </span>
                       </div>
                       <div class="input small">
-                        <input v-model="EmpObj.employeeCode" />
+                        <input
+                          type="text"
+                          :disabled="viewState"
+                          :style="{ background: backgroundInput }"
+                          v-model="EmpObj.employeeCode"
+                        />
                       </div>
                       <em class="validate-msg">
                         Dùng làm tên đăng nhập vào hệ thống, có thể sử dụng số
@@ -73,7 +90,12 @@
                         <span>Email</span>
                       </div>
                       <div class="input medium">
-                        <input v-model="EmpObj.email" />
+                        <input
+                          type="text"
+                          :disabled="viewState"
+                          :style="{ background: backgroundInput }"
+                          v-model="EmpObj.email"
+                        />
                       </div>
                     </div>
                     <div class="field">
@@ -81,16 +103,26 @@
                         <span>Số Điện Thoại</span>
                       </div>
                       <div class="input medium">
-                        <input v-model="EmpObj.phoneNumber" />
+                        <input
+                          type="text"
+                          :disabled="viewState"
+                          :style="{ background: backgroundInput }"
+                          v-model="EmpObj.phoneNumber"
+                        />
                       </div>
                     </div>
                     <div class="field">
                       <div class="label">
                         <span>Họ và tên</span>
-                        <span class="required">(*)</span>
+                        <span class="required"> (*) </span>
                       </div>
                       <div class="input large">
-                        <input v-model="EmpObj.fullName" />
+                        <input
+                          type="text"
+                          :disabled="viewState"
+                          :style="{ background: backgroundInput }"
+                          v-model="EmpObj.fullName"
+                        />
                       </div>
                     </div>
 
@@ -105,9 +137,14 @@
                             <select
                               v-model="EmpObj.gender"
                               style="width: 100%;"
+                              :style="{ background: backgroundInput }"
                             >
-                              <option value="1">{{ formatGender(1) }}</option>
-                              <option value="0">{{ formatGender(0) }}</option>
+                              <option :disabled="viewState" value="1">{{
+                                formatGender(1)
+                              }}</option>
+                              <option :disabled="viewState" value="0">{{
+                                formatGender(0)
+                              }}</option>
                             </select>
                           </div>
                         </div>
@@ -118,7 +155,12 @@
                             <span>Ngày sinh</span>
                           </div>
                           <div class="input large">
-                            <input type="date" v-model="EmpObj.dateOfBirth" />
+                            <input
+                              type="date"
+                              :style="{ background: backgroundInput }"
+                              :disabled="viewState"
+                              v-model="EmpObj.dateOfBirth"
+                            />
                           </div>
                         </div>
                       </div>
@@ -134,6 +176,8 @@
                             <input
                               type="text"
                               v-model="EmpObj.citizenIdentityCode"
+                              :disabled="viewState"
+                              :style="{ background: backgroundInput }"
                             />
                           </div>
                         </div>
@@ -147,6 +191,8 @@
                             <input
                               type="date"
                               v-model="EmpObj.citizenIdentityDate"
+                              :style="{ background: backgroundInput }"
+                              :disabled="viewState"
                             />
                           </div>
                         </div>
@@ -157,13 +203,18 @@
                         <span>Nơi cấp CMND</span>
                       </div>
                       <div class="input large">
-                        <input v-model="EmpObj.citizenIdentityPlace" />
+                        <input
+                          type="text"
+                          v-model="EmpObj.citizenIdentityPlace"
+                          :style="{ background: backgroundInput }"
+                          :disabled="viewState"
+                        />
                       </div>
                     </div>
                     <div class="field">
                       <div class="label">
                         <span>Phân quyền</span>
-                        <span class="required">(*)</span>
+                        <span class="required"> (*) </span>
                       </div>
                       <div class="checkbox">
                         <div class="checkbox-item">
@@ -173,6 +224,8 @@
                             name="vehicle1"
                             value="Bike"
                             class="input-checkbox"
+                            :style="{ background: backgroundInput }"
+                            :disabled="viewState"
                           />
                           <label for="vehicle1"
                             >Vai trò Quản trị hệ thống</label
@@ -185,6 +238,8 @@
                             name="vehicle2"
                             value="Car"
                             class="input-checkbox"
+                            :style="{ background: backgroundInput }"
+                            :disabled="viewState"
                           />
                           <label for="vehicle2">Vai trò Quản lý chuỗi</label>
                         </div>
@@ -193,11 +248,23 @@
                     <div class="field">
                       <div class="label">
                         <span>Trạng thái</span>
-                        <span class="required">(*)</span>
+                        <span class="required"> (*) </span>
                       </div>
                       <div class="checkbox">
                         <div class="input small">
-                          <input v-model="EmpObj.workState" />
+                          <!-- <input v-model="EmpObj.workState" /> -->
+                          <select
+                            v-model="EmpObj.workState"
+                            :style="{ background: backgroundInput }"
+                            :disabled="viewState"
+                          >
+                            <option :selected="EmpObj.workState" value="1"
+                              >Đang làm việc</option
+                            >
+                            <option value="2">Chính thức</option>
+                            <option value="3">Thử việc</option>
+                            <option value="4">Nghỉ việc</option>
+                          </select>
                         </div>
                         <div
                           class="checkbox-item"
@@ -209,6 +276,8 @@
                             name="vehicle2"
                             value="Car"
                             class="input-checkbox"
+                            :style="{ background: backgroundInput }"
+                            :disabled="viewState"
                           />
                           <label for="vehicle2" style="text-align:start"
                             >Cho phép làm việc với phần mềm CUKCUK</label
@@ -230,10 +299,58 @@
                           name="vehicle3"
                           value="Bike"
                           class="input-checkbox"
+                          :style="{ background: backgroundInput }"
+                          :disabled="viewState"
                         />
                         <label style="min-width:100px" for="vehicle3"
                           >Đổi mật khẩu</label
                         >
+                      </div>
+                    </div>
+                    <div class="field-group" :style="{ display: displayNone }">
+                      <div class="groupLeft">
+                        <div class="field">
+                          <div class="label">
+                            <span>Mật khẩu truy cập</span>
+                            <span class="required">(*)</span>
+                          </div>
+                          <div
+                            class="input medium warning-input"
+                            style="    margin-right: 24px;position:relative"
+                          >
+                            <!-- <input v-model="EmpObj.Gender" style="display:none" /> -->
+                            <input
+                              id="password-field"
+                              v-model="EmpObj.passWord"
+                              :type="value ? 'password' : 'text'"
+                            />
+
+                            <p
+                              class="sprite-eye toggle-password"
+                              @click="value = !value"
+                            ></p>
+                            <img src="@/assets/icon/exclamation.png" />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="groupRight" style="width: calc(53% - 5px);">
+                        <div class="field">
+                          <div class="label">
+                            <span>Xác nhận MK</span>
+                            <span class="required">(*)</span>
+                          </div>
+                          <div
+                            class="input medium warning-input"
+                            style="position:relative"
+                          >
+                            <input :type="valuecf ? 'password' : 'text'" />
+                            <p
+                              class="sprite-eye-cf toggle-password"
+                              @click="valuecf = !valuecf"
+                            ></p>
+                            <img src="@/assets/icon/exclamation.png" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -247,12 +364,6 @@
                     </div>
                   </div>
                 </div>
-
-                <v-card-text style="width:100%"> </v-card-text>
-
-                <v-card-actions class="justify-end">
-                  <v-btn text @click="dialog.value = false">Close</v-btn>
-                </v-card-actions>
               </v-card>
             </template>
           </v-dialog>
@@ -268,31 +379,60 @@ export default {
   data() {
     return {
       EmpObj: {
+        employeeId: null,
         employeeCode: "",
         email: "",
         fullName: "",
-        gender: null,
+        gender: 1,
         dateOfBirth: null,
         salary: null,
         phoneNumber: "",
-        workState: "",
+        workState: 1,
         citizenIdentityCode: "",
         citizebIdentityPlace: "",
         citizebIdentityDate: null,
       },
+      value: true,
+      valuecf: true,
+      stateAdd: false,
+      stateEdit: false,
+      stateView: false,
+      displayNone: "flex",
+      backgroundInput: "#f2f2f2",
+      password: "",
     };
   },
-  props: ["visible", "obj"],
+  props: ["visible", "obj", "viewState", "hidePassword"],
   watch: {
     obj: async function(newVal) {
       // watch it
-      var emp = await axios.get(
-        `https://localhost:44382/api/Employee?id=` + newVal
-      );
+      if (newVal > 0) {
+        var emp = await axios.get(
+          `https://localhost:44382/api/Employee?id=` + newVal
+        );
 
-      this.EmpObj = emp.data.data[0];
+        this.EmpObj = emp.data.data[0];
+        //this.EmpObj.dateOfBirth = this.formatDate(emp.data.data[0].dateOfBirth);
+      } else {
+        this.setStateDefaul();
+      }
+
       console.log(this.EmpObj);
       //console.log(newVal);
+    },
+    viewState: function(newVal) {
+      if (newVal == true) {
+        this.backgroundInput = "#f2f2f2";
+      } else {
+        this.backgroundInput = "#fff";
+      }
+    },
+    hidePassword: function(newVal) {
+      if (newVal == true) {
+        this.displayNone = "none";
+      } else {
+        this.displayNone = "flex";
+      }
     },
   },
   computed: {
@@ -308,16 +448,36 @@ export default {
     },
   },
   methods: {
-    saveForm: async function() {
-      console.log(this.EmpObj);
-      const response = await axios({
-        method: "post",
-        url: "https://localhost:44382/api/Employee",
-        data: this.EmpObj, // This is the body part
-      });
-
-      return response;
+    loadData: function() {
+      this.$emit("loadData");
     },
+    saveForm: function() {
+      //lưu chỉnh sửa
+
+      if (this.obj > 0) {
+        this.EmpObj.employeeId = this.obj;
+
+        axios({
+          method: "put",
+          url: "https://localhost:44382/api/Employee",
+          data: this.EmpObj, // This is the body part
+        }).then(() => {
+          this.show = false;
+          this.loadData();
+        });
+      } else {
+        //thêm bản ghi mới
+        axios({
+          method: "post",
+          url: "https://localhost:44382/api/Employee",
+          data: this.EmpObj, // This is the body part
+        }).then(() => {
+          this.show = false;
+          this.loadData();
+        });
+      }
+    },
+
     formatGender(gender) {
       var g = parseInt(gender);
       var genderName =
@@ -339,10 +499,37 @@ export default {
       var year = date.getFullYear();
       return `${day}/${month}/${year}`;
     },
+    setStateDefaul() {
+      this.EmpObj.employeeCode = "";
+      this.EmpObj.email = "";
+      this.EmpObj.fullName = "";
+      this.EmpObj.gender = 1;
+      this.EmpObj.dateOfBirth = null;
+      this.EmpObj.salary = null;
+      this.EmpObj.phoneNumber = "";
+      this.EmpObj.workState = 1;
+      this.EmpObj.citizenIdentityCode = "";
+      this.EmpObj.citizebIdentityPlace = "";
+      this.EmpObj.citizebIdentityDate = null;
+      this.EmpObj.passWord = "";
+    },
   },
 };
 </script>
 <style>
+.warning-input img {
+  position: absolute;
+  top: 4px;
+  /* left: 4px; */
+  right: -24px;
+  height: 20px;
+}
+.toggle-password {
+  position: absolute;
+  right: 4px;
+  top: 9px;
+  cursor: pointer;
+}
 .title-dialog {
   position: relative;
   top: -20px;
@@ -354,6 +541,16 @@ export default {
   width: 16px;
   height: 13px;
 }
+.sprite-eye {
+  background: url("../assets/icon/set-icon.png") no-repeat 0 -2602px;
+  width: 16px;
+  height: 12px;
+}
+.sprite-eye-cf {
+  background: url("../assets/icon/set-icon.png") no-repeat 0 -2602px;
+  width: 16px;
+  height: 12px;
+}
 
 .sprite {
   background-image: url("/assets/icon/set-icon.png") no-repeat;
@@ -362,33 +559,38 @@ export default {
   width: 16px;
   height: 13px;
 }
-.modal-action div img {
-  height: 20px;
+.modal-action button span img {
+  height: 13px;
+  padding-right: 4px;
 }
 .modal-action {
   display: flex;
   padding: 8px;
-  height: 40px;
 }
-.modal-action div {
+
+#action-tool button {
+  min-width: 64px;
+  padding: 0 2px !important;
+  position: relative;
+  top: -11px;
+}
+/* .modal-action button :hover{
+  border: solid 1px blue;
+} */
+.modal-action button span {
   display: flex;
   margin-left: 8px;
   padding: 0 4px;
   cursor: pointer;
+  font-size: 12px;
 }
-.modal-action div:hover {
-  border: solid 1px blue;
-}
-.modal-action div p {
-  margin-top: 3px;
-}
-.modal-action div span {
-  padding-left: 8px;
-}
-.modal-action :hover {
+/* .modal-action button :hover {
   background: #fff;
-  /* border: 1px solid blue; */
-}
+} */
+/* .modal-action :hover {
+  background: #fff;
+  /* border: 1px solid blue;} */
+
 div .row {
   margin: 0;
 }
@@ -432,8 +634,8 @@ div .row {
   padding-left: 8px;
 }
 .field .label {
-  width: 60%;
-  max-width: 140px;
+  width: 66%;
+  max-width: 150px;
   min-width: 100px;
   text-align: left;
   white-space: nowrap;

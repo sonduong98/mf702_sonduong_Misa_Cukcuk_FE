@@ -22,10 +22,12 @@
         <img src="@/assets/icon/page-next.png" />
         <a href="#">Nhân viên</a>
         <span>Lọc nhanh</span>
-        <select>
-          <option value="1">Đang làm việc</option>
+        <select @change="filterEmployee()" v-model="filterWork">
+          <option value="0">--Tất cả--</option>
+          <option :selected="filterWork" value="1">Đang làm việc</option>
           <option value="2">Chính thức</option>
-          <option value="3">Nghỉ việc</option>
+          <option value="3">Thử việc</option>
+          <option value="4">Nghỉ việc</option>
         </select>
       </div>
       <div class="content-header-right">
@@ -39,11 +41,11 @@
           <tr class="table-action" style="max-width: 200px;">
             <!-- <div @click="show = true"> -->
 
-            <div @click.stop="showScheduleForm = true">
+            <div @click.stop="addItem()">
               <img src="@/assets/icon/SaveAdd16.png" />
               <span>Thêm</span>
             </div>
-            <div @click.stop="editItem(2)">
+            <div @click.stop="viewItem(2)">
               <p class="sprite-view"></p>
               <span>Xem</span>
             </div>
@@ -77,9 +79,9 @@
           <tr
             class="emp-items"
             v-for="(item, index) in listEmploy.data"
-            @dblclick.stop="editItem(item.employeeId)"
+            @dblclick.stop="viewItem(item.employeeId)"
             :key="index"
-            @click="activate(item.employeeId)"
+            @click="activate(item.employeeId, item.employeeCode)"
             :class="{
               sidebaractive: active_el == item.employeeId,
               sidebaractivehover: active_elhover == item.employeeId,
@@ -92,55 +94,100 @@
             <td>{{ item.phoneNumber }}</td>
             <td>{{ formatDate(item.dateOfBirth) }}</td>
             <td>{{ formatGender(item.gender) }}</td>
-            <td>{{ item.workState }}</td>
+            <td>{{ formatWorkState(item.workState) }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-
+    <ConfirmDialog
+      :visibleConfirm="showScheduleFormConfirm"
+      @close1="close1"
+      :item="itemDelete"
+      :name="itemDeleteName"
+      @loadData="loadData"
+      :style="{ display: displayNone }"
+    />
     <EmployeeForm
       :visible="showScheduleForm"
-      @close="showScheduleForm = false"
+      @close="close"
       :obj="item"
+      @loadData="loadData"
+      :viewState="setDisableInput"
+      :style="{ display: displayNone }"
+      :hidePassword="setDisablePasswork"
     />
   </div>
 </template>
 <script>
 import axios from "axios";
 import EmployeeForm from "./EmployeeForm.vue";
+import ConfirmDialog from "./ConfirmDialog.vue";
 export default {
   components: {
     EmployeeForm,
+    ConfirmDialog,
   },
   data() {
     return {
       showScheduleForm: false,
+      showScheduleFormConfirm: false,
       listEmploy: [],
       item: Object,
       active_el: -1,
       active_elhover: -1,
+      filterWork: 1,
+      itemDelete: Object,
+      itemDeleteName: Object,
+      setDisableInput: Object,
+      setDisablePasswork: Object,
+      displayNone: "none",
     };
   },
   async mounted() {
     var d = await axios.get(
-      `https://localhost:44382/api/Employee?pageIndex=1&pageSize=10`
+      `https://localhost:44382/api/Employee?pageIndex=1&pageSize=100`
     );
     this.listEmploy = d.data;
   },
 
   methods: {
-    editItem: function(i) {
+    close: function() {
+      this.showScheduleForm = false;
+      this.displayNone = "none";
+    },
+    close1: function() {
+      this.displayNone = "none";
+      this.showScheduleFormConfirm = false;
+    },
+    editItem: function() {
       this.item = this.active_el;
       this.showScheduleForm = true;
-      console.log(i);
+      this.displayNone = "block";
+      this.setDisablePasswork = false;
+      this.setDisableInput = false;
     },
-    async filterEmployee(event) {
-      var workStatusId = event.target.value;
+    viewItem: function() {
+      this.item = this.active_el;
+      this.showScheduleForm = true;
+      this.setDisableInput = true;
+      this.displayNone = "block";
+      this.setDisablePasswork = true;
+    },
+    addItem: function() {
+      this.showScheduleForm = true;
+      this.item = -5;
+      this.displayNone = "block";
+      this.setDisablePasswork = false;
+      this.setDisableInput = false;
+    },
+    filterEmployee: async function() {
+      // var workStatusId = event.target.value;
+      console.log(this.filterWork);
       try {
         var employee = await axios.get(
-          `http://localhost:52690/api/v1/Employees/filter?workStatus=${workStatusId}`
+          `https://localhost:44382/api/Employee?workState=${this.filterWork}`
         );
-        this.employees = employee.data;
+        this.listEmploy = employee.data;
       } catch (error) {
         console.log(error);
       }
@@ -150,6 +197,20 @@ export default {
       var genderName =
         g == 1 ? "Nữ" : g == 0 ? "Nam" : g == 2 ? "Khác" : "Không xác định";
       return genderName;
+    },
+    formatWorkState(wsid) {
+      var g = parseInt(wsid);
+      var workStateName =
+        g == 1
+          ? "Đang Làm việc"
+          : g == 2
+          ? "Chính thức"
+          : g == 3
+          ? "Thử việc"
+          : g == 4
+          ? "Nghỉ việc"
+          : "Không xác định";
+      return workStateName;
     },
     /**
      *Hàm định dạng lại ngày sinh
@@ -166,8 +227,9 @@ export default {
       var year = date.getFullYear();
       return `${day}/${month}/${year}`;
     },
-    activate: function(el) {
+    activate: function(el, nc) {
       this.active_el = el;
+      this.itemDeleteName = nc;
     },
     activatehover: function(elhover) {
       this.active_elhover = elhover;
@@ -175,19 +237,34 @@ export default {
     unactivehover: function() {
       this.active_elhover = -1;
     },
-    deleteItem: async function() {
-      console.log(`https://localhost:44382/api/Employee?id=${this.active_el}`);
-
-      await axios.delete(
-        `https://localhost:44382/api/Employee?id=${this.active_el}`,
-        {
-          id: this.active_el,
-        }
-      );
+    loadData: async function() {
       var listUpdate = await axios.get(
-        `https://localhost:44382/api/Employee?pageIndex=1&pageSize=50`
+        `https://localhost:44382/api/Employee?pageIndex=1&pageSize=100`
       );
       this.listEmploy = listUpdate.data;
+    },
+    deleteItem: function() {
+      this.itemDelete = this.active_el;
+      console.log(this.itemDelete);
+      this.showScheduleFormConfirm = true;
+      this.displayNone = "block";
+
+      // this.deleteItem = this.listEmploy.find(
+      //   (item) => item.employeeId === this.active_el
+      // );
+
+      // console.log(`https://localhost:44382/api/Employee?id=${this.active_el}`);
+
+      // await axios.delete(
+      //   `https://localhost:44382/api/Employee?id=${this.active_el}`,
+      //   {
+      //     id: this.active_el,
+      //   }
+      // );
+      // var listUpdate = await axios.get(
+      //   `https://localhost:44382/api/Employee?pageIndex=1&pageSize=50`
+      // );
+      // this.listEmploy = listUpdate.data;
     },
   },
 };

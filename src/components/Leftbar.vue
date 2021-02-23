@@ -32,7 +32,7 @@
   width: 200px;
   font-weight: 600;
   border-right: solid 2px #e5e5e5;
-  height: 130vh;
+  height: 100%;
   transition: width 1s;
   opacity: 1;
   background-color: #0973b9;
