@@ -5,7 +5,7 @@
         <v-col cols="auto">
           <v-dialog
             transition="dialog-top-transition"
-            max-width="600"
+            max-width="464px"
             v-model="showConfirm"
           >
             <template v-slot:default="dialog">
@@ -53,21 +53,23 @@ export default {
     },
   },
   methods: {
+    //hàm cập nhật list dữ liệu được gọi khi delete thành công
     loadData: function() {
       this.$emit("loadData");
     },
+    //hàm show toast khi thực hiện delete thành công
+    showMessageSuccess: function() {
+      this.$emit("showMessageSuccess");
+    },
+    //hàm xóa dữ liệu khi click button confirm dialog
     deleteItem: async function() {
       await axios
         .delete(`https://localhost:44382/api/Employee?id=${this.item}`)
         .then(() => {
           this.showConfirm = false;
           this.loadData();
+          this.showMessageSuccess();
         });
-      //   var listUpdate = await axios.get(
-      //     `https://localhost:44382/api/Employee?pageIndex=1&pageSize=50`
-      //   );
-      //   this.listEmploy = listUpdate.data;
-      //   }
     },
   },
 };

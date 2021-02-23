@@ -1,15 +1,24 @@
 <template>
   <div class="topbar">
-    <div class="topbar-business-name">
+    <div class="topbar-business-name" style="position:relative">
       <select>
         <option>Nhà Hàng Biển Đông</option>
         <option>Quán thần tiên tỉ tỉ</option>
       </select>
+      <img class="img-toggle" src="@/assets/icon/default-small-arrow.png" />
     </div>
     <div class="topbar-user">
-      <select>
-        <option>Tiếng việt(tiếng việt)</option>
-      </select>
+      <div style="position:relative">
+        <select>
+          <option>Tiếng việt(tiếng việt)</option>
+        </select>
+        <img
+          class="img-toggle"
+          style="    top: 6px;"
+          src="@/assets/icon/default-small-arrow.png"
+        />
+      </div>
+
       <a href="#" class="noti"><img src="@/assets/icon/icon-noti-face.png"/></a>
       <a class="support" href="#"><img src="@/assets/icon/ic_support.svg"/></a>
 
@@ -24,9 +33,20 @@
   </div>
 </template>
 <style>
+.img-toggle {
+  height: 20px;
+  height: 20px;
+  position: absolute;
+  top: 17px;
+  right: 0px;
+}
 .topbar a {
   color: #fff;
   text-decoration: none;
+}
+.topbar-user {
+  display: flex;
+  align-items: center;
 }
 .topbar-user a img {
   height: 31px;

@@ -33,14 +33,16 @@
                   id="action-tool"
                   style="height:28px;background-color:#ededed;display:flex"
                 >
-                  <v-btn text
+                  <v-btn text @click="addChild"
                     ><img src="@/assets/icon/SaveAdd16.png" /> Thêm</v-btn
                   >
-                  <v-btn text><img src="@/assets/icon/Edit16.png" /> Sửa</v-btn>
+                  <v-btn text @click="editChild"
+                    ><img src="@/assets/icon/Edit16.png" /> Sửa</v-btn
+                  >
                   <v-btn text @click="saveForm"
                     ><img src="@/assets/icon/Save16.png" /> Cất</v-btn
                   >
-                  <v-btn text
+                  <v-btn text @click="deleteChild"
                     ><img src="@/assets/icon/icons8-delete-26.png" /> Xóa</v-btn
                   >
                   <!-- <div @click="show = true">
@@ -72,12 +74,22 @@
                         <span>Mã Nhân Viên</span>
                         <span class="required"> (*) </span>
                       </div>
-                      <div class="input small">
+                      <div
+                        class="input small warning-input"
+                        style="position:relative"
+                      >
                         <input
                           type="text"
-                          :disabled="viewState"
-                          :style="{ background: backgroundInput }"
+                          :disabled="viewStateChild"
+                          :style="{
+                            background: backgroundInput,
+                          }"
                           v-model="EmpObj.employeeCode"
+                          ref="EmpCode"
+                        />
+                        <img
+                          style="display:none"
+                          src="@/assets/icon/exclamation.png"
                         />
                       </div>
                       <em class="validate-msg">
@@ -91,8 +103,8 @@
                       </div>
                       <div class="input medium">
                         <input
-                          type="text"
-                          :disabled="viewState"
+                          type="email"
+                          :disabled="viewStateChild"
                           :style="{ background: backgroundInput }"
                           v-model="EmpObj.email"
                         />
@@ -105,7 +117,7 @@
                       <div class="input medium">
                         <input
                           type="text"
-                          :disabled="viewState"
+                          :disabled="viewStateChild"
                           :style="{ background: backgroundInput }"
                           v-model="EmpObj.phoneNumber"
                         />
@@ -116,12 +128,22 @@
                         <span>Họ và tên</span>
                         <span class="required"> (*) </span>
                       </div>
-                      <div class="input large">
+                      <div
+                        class="input large warning-input"
+                        style="position:relative"
+                      >
                         <input
                           type="text"
-                          :disabled="viewState"
-                          :style="{ background: backgroundInput }"
+                          :disabled="viewStateChild"
+                          :style="{
+                            background: backgroundInput,
+                            border: validateBorder,
+                          }"
                           v-model="EmpObj.fullName"
+                        />
+                        <img
+                          :style="{ display: validateAble }"
+                          src="@/assets/icon/exclamation.png"
                         />
                       </div>
                     </div>
@@ -139,10 +161,10 @@
                               style="width: 100%;"
                               :style="{ background: backgroundInput }"
                             >
-                              <option :disabled="viewState" value="1">{{
+                              <option :disabled="viewStateChild" value="1">{{
                                 formatGender(1)
                               }}</option>
-                              <option :disabled="viewState" value="0">{{
+                              <option :disabled="viewStateChild" value="0">{{
                                 formatGender(0)
                               }}</option>
                             </select>
@@ -158,10 +180,13 @@
                             <input
                               type="date"
                               :style="{ background: backgroundInput }"
-                              :disabled="viewState"
+                              :disabled="viewStateChild"
                               v-model="EmpObj.dateOfBirth"
                             />
                           </div>
+                          <!-- <span>{{
+                            moment(EmpObj.dateOfBirth).format("YYYY-MM-DD")
+                          }}</span> -->
                         </div>
                       </div>
                     </div>
@@ -176,7 +201,7 @@
                             <input
                               type="text"
                               v-model="EmpObj.citizenIdentityCode"
-                              :disabled="viewState"
+                              :disabled="viewStateChild"
                               :style="{ background: backgroundInput }"
                             />
                           </div>
@@ -192,7 +217,7 @@
                               type="date"
                               v-model="EmpObj.citizenIdentityDate"
                               :style="{ background: backgroundInput }"
-                              :disabled="viewState"
+                              :disabled="viewStateChild"
                             />
                           </div>
                         </div>
@@ -207,7 +232,7 @@
                           type="text"
                           v-model="EmpObj.citizenIdentityPlace"
                           :style="{ background: backgroundInput }"
-                          :disabled="viewState"
+                          :disabled="viewStateChild"
                         />
                       </div>
                     </div>
@@ -219,13 +244,14 @@
                       <div class="checkbox">
                         <div class="checkbox-item">
                           <input
-                            type="checkbox"
+                            type="radio"
                             id="vehicle1"
                             name="vehicle1"
-                            value="Bike"
+                            value="2"
                             class="input-checkbox"
                             :style="{ background: backgroundInput }"
-                            :disabled="viewState"
+                            :disabled="viewStateChild"
+                            v-model="EmpObj.roleId"
                           />
                           <label for="vehicle1"
                             >Vai trò Quản trị hệ thống</label
@@ -233,13 +259,14 @@
                         </div>
                         <div class="checkbox-item">
                           <input
-                            type="checkbox"
-                            id="vehicle2"
-                            name="vehicle2"
-                            value="Car"
+                            type="radio"
+                            id="vehicle1"
+                            name="vehicle1"
+                            value="1"
                             class="input-checkbox"
                             :style="{ background: backgroundInput }"
-                            :disabled="viewState"
+                            :disabled="viewStateChild"
+                            v-model="EmpObj.roleId"
                           />
                           <label for="vehicle2">Vai trò Quản lý chuỗi</label>
                         </div>
@@ -256,7 +283,7 @@
                           <select
                             v-model="EmpObj.workState"
                             :style="{ background: backgroundInput }"
-                            :disabled="viewState"
+                            :disabled="viewStateChild"
                           >
                             <option :selected="EmpObj.workState" value="1"
                               >Đang làm việc</option
@@ -274,10 +301,11 @@
                             type="checkbox"
                             id="vehicle2"
                             name="vehicle2"
-                            value="Car"
+                            value="true"
                             class="input-checkbox"
                             :style="{ background: backgroundInput }"
-                            :disabled="viewState"
+                            :disabled="viewStateChild"
+                            v-model="EmpObj.allowWorkCukCuk"
                           />
                           <label for="vehicle2" style="text-align:start"
                             >Cho phép làm việc với phần mềm CUKCUK</label
@@ -285,13 +313,16 @@
                         </div>
                       </div>
                     </div>
-                    <div class="field">
+                    <div
+                      class="field"
+                      :style="{ display: displayNonePassCheck }"
+                    >
                       <div class="label"></div>
                       <div
                         class="checkbox-item"
                         style="display:flex;
-    align-items: center;
-    width: 18%;"
+                        align-items: center;
+                        width: 18%;"
                       >
                         <input
                           type="checkbox"
@@ -300,7 +331,8 @@
                           value="Bike"
                           class="input-checkbox"
                           :style="{ background: backgroundInput }"
-                          :disabled="viewState"
+                          :disabled="viewStateChild"
+                          @change="toggleCheckPass"
                         />
                         <label style="min-width:100px" for="vehicle3"
                           >Đổi mật khẩu</label
@@ -312,7 +344,7 @@
                         <div class="field">
                           <div class="label">
                             <span>Mật khẩu truy cập</span>
-                            <span class="required">(*)</span>
+                            <span class="required"> (*) </span>
                           </div>
                           <div
                             class="input medium warning-input"
@@ -321,15 +353,19 @@
                             <!-- <input v-model="EmpObj.Gender" style="display:none" /> -->
                             <input
                               id="password-field"
-                              v-model="EmpObj.passWord"
+                              v-model="EmpObj.password"
                               :type="value ? 'password' : 'text'"
+                              :style="{ border: validateBorderPass }"
                             />
 
                             <p
                               class="sprite-eye toggle-password"
                               @click="value = !value"
                             ></p>
-                            <img src="@/assets/icon/exclamation.png" />
+                            <img
+                              :style="{ display: validateAblePass }"
+                              src="@/assets/icon/exclamation.png"
+                            />
                           </div>
                         </div>
                       </div>
@@ -337,18 +373,25 @@
                         <div class="field">
                           <div class="label">
                             <span>Xác nhận MK</span>
-                            <span class="required">(*)</span>
+                            <span class="required"> (*) </span>
                           </div>
                           <div
                             class="input medium warning-input"
                             style="position:relative"
                           >
-                            <input :type="valuecf ? 'password' : 'text'" />
+                            <input
+                              :type="valuecf ? 'password' : 'text'"
+                              v-model="confirmPassword"
+                              :style="{ border: validateBorderPass }"
+                            />
                             <p
                               class="sprite-eye-cf toggle-password"
                               @click="valuecf = !valuecf"
                             ></p>
-                            <img src="@/assets/icon/exclamation.png" />
+                            <img
+                              :style="{ display: validateAblePass }"
+                              src="@/assets/icon/exclamation.png"
+                            />
                           </div>
                         </div>
                       </div>
@@ -384,13 +427,15 @@ export default {
         email: "",
         fullName: "",
         gender: 1,
-        dateOfBirth: null,
+        dateOfBirth: "2021-02-23T17:15:43.106Z",
         salary: null,
         phoneNumber: "",
         workState: 1,
         citizenIdentityCode: "",
         citizebIdentityPlace: "",
-        citizebIdentityDate: null,
+        citizebIdentityDate: "2021-02-23T17:15:43.106Z",
+        password: "",
+        roleId: null,
       },
       value: true,
       valuecf: true,
@@ -400,10 +445,27 @@ export default {
       displayNone: "flex",
       backgroundInput: "#f2f2f2",
       password: "",
+      viewStateChild: false,
+      displayNonePassCheck: "none",
+      validateAble: "none",
+      validateBorder: "1px solid #e5e5e5",
+      validateAblePass: "none",
+      validateBorderPass: "1px solid #e5e5e5",
+      confirmPassword: "",
+      allowWorkCukCuk: false,
     };
   },
-  props: ["visible", "obj", "viewState", "hidePassword"],
+  props: [
+    "visible",
+    "obj",
+    "viewState",
+    "hidePassword",
+    "addStateCheckboxPassword",
+    "idMax",
+  ],
+  //watch lắng nghe sự thay đổi của prop để cập nhật lại form
   watch: {
+    //prop là id của item được chọn
     obj: async function(newVal) {
       // watch it
       if (newVal > 0) {
@@ -412,21 +474,23 @@ export default {
         );
 
         this.EmpObj = emp.data.data[0];
+        this.confirmPassword = this.EmpObj.password;
         //this.EmpObj.dateOfBirth = this.formatDate(emp.data.data[0].dateOfBirth);
       } else {
         this.setStateDefaul();
       }
-
-      console.log(this.EmpObj);
-      //console.log(newVal);
     },
+    //prop sử dụng để disable các input,select của form
     viewState: function(newVal) {
       if (newVal == true) {
+        this.viewStateChild = true;
         this.backgroundInput = "#f2f2f2";
       } else {
         this.backgroundInput = "#fff";
+        this.viewStateChild = false;
       }
     },
+    //ẩn row password trên form
     hidePassword: function(newVal) {
       if (newVal == true) {
         this.displayNone = "none";
@@ -434,8 +498,23 @@ export default {
         this.displayNone = "flex";
       }
     },
+    //theo dõi checkbox đổi mật khẩu
+    addStateCheckboxPassword: function(newVal) {
+      if (newVal == true) {
+        this.displayNonePassCheck = "none";
+      } else {
+        this.displayNonePassCheck = "flex";
+      }
+    },
+    //nhận id lớn nhất để cập nhật mã nhân viên dc thêm
+    idMax: function(newVal) {
+      console.log(newVal);
+      var code = newVal + 1;
+      this.EmpObj.employeeCode = "NV" + code;
+    },
   },
   computed: {
+    //hàm ẩn hiện dialog
     show: {
       get() {
         return this.visible;
@@ -443,17 +522,71 @@ export default {
       set(value) {
         if (!value) {
           this.$emit("close");
+          this.validateAble = "none";
+          this.setStateDefaul();
+          this.viewStateChild = true;
+          this.backgroundInput = "#f2f2f2";
         }
       },
     },
   },
   methods: {
+    //các hàm gọi khi thực hiện chức năng thành công hay thất bại
+    showMessageEditSuccess: function() {
+      this.$emit("showMessageEditSuccess");
+    },
+    showMessageAddSuccess: function() {
+      this.$emit("showMessageAddSuccess");
+    },
+    showMessageAddUnsuccess: function() {
+      this.$emit("showMessageAddUnsuccess");
+    },
+    //hàm toggle checkbox đổi mật khẩu
+    toggleCheckPass: function() {
+      if (this.displayNone == "none") {
+        this.displayNonePassCheck = "flex";
+        this.displayNone = "flex";
+      } else {
+        this.displayNonePassCheck = "flex";
+        this.displayNone = "none";
+      }
+    },
+    //hàm edit undisable các input
+    editChild: function() {
+      this.backgroundInput = "#fff";
+      this.viewStateChild = false;
+      this.displayNone = "flex";
+    },
+    //hàm add
+    addChild: function() {
+      this.backgroundInput = "#fff";
+      this.viewStateChild = false;
+      this.setStateDefaul();
+      var code = this.idMax + 1;
+      this.EmpObj.employeeCode = "NV" + code;
+    },
+    //hàm delete nhân viên trên dialog
+    deleteChild: async function() {
+      await axios
+        .delete(`https://localhost:44382/api/Employee?id=${this.obj}`)
+        .then(() => {
+          this.show = false;
+          this.loadData();
+        });
+    },
+    //hàm gọi load lại dữ liệu khi thực hiện chức năng thành công
     loadData: function() {
       this.$emit("loadData");
     },
+    //hàm lưu dữ put hoắc post
     saveForm: function() {
       //lưu chỉnh sửa
+      if (this.EmpObj.fullName == null || this.EmpObj.fullName == "") {
+        this.validateAble = "block";
+        this.validateBorder = "1px solid red";
 
+        return false;
+      }
       if (this.obj > 0) {
         this.EmpObj.employeeId = this.obj;
 
@@ -463,21 +596,43 @@ export default {
           data: this.EmpObj, // This is the body part
         }).then(() => {
           this.show = false;
+          this.showMessageEditSuccess();
           this.loadData();
         });
       } else {
         //thêm bản ghi mới
-        axios({
-          method: "post",
-          url: "https://localhost:44382/api/Employee",
-          data: this.EmpObj, // This is the body part
-        }).then(() => {
-          this.show = false;
-          this.loadData();
-        });
+        //validate
+        if (this.displayNonePassCheck == "none") {
+          if (this.EmpObj.fullName == null || this.EmpObj.fullName == "") {
+            this.validateAble = "block";
+            (this.validateBorder = "1px solid red"),
+              alert("Họ và tên không được bỏ trống!");
+            return false;
+          }
+          if (this.EmpObj.password != this.confirmPassword) {
+            alert("Xác nhận mật khẩu không trùng với mật khẩu đã nhập");
+            this.validateAblePass = "block";
+            this.validateBorderPass = "1px solid red";
+            return false;
+          }
+          axios({
+            method: "post",
+            url: "https://localhost:44382/api/Employee",
+            data: this.EmpObj, // This is the body part
+          }).then((res) => {
+            console.log(res);
+            if (res.status == 200) {
+              this.show = false;
+              this.loadData();
+              this.showMessageAddSuccess();
+            } else {
+              this.showMessageAddUnsuccess();
+            }
+          });
+        }
       }
     },
-
+    //hàm format giới tính
     formatGender(gender) {
       var g = parseInt(gender);
       var genderName =
@@ -489,6 +644,7 @@ export default {
      * @param {string} d
      *
      */
+    //hàm format ngày tháng
     formatDate(d) {
       var date = new Date(d);
       var day = date.getDate() > 10 ? date.getDate() : "0" + date.getDate();
@@ -499,19 +655,21 @@ export default {
       var year = date.getFullYear();
       return `${day}/${month}/${year}`;
     },
+    //hàm set các state trở về mặc định
     setStateDefaul() {
       this.EmpObj.employeeCode = "";
       this.EmpObj.email = "";
       this.EmpObj.fullName = "";
       this.EmpObj.gender = 1;
-      this.EmpObj.dateOfBirth = null;
+      this.EmpObj.dateOfBirth = "2021-02-23T17:15:43.106Z";
       this.EmpObj.salary = null;
       this.EmpObj.phoneNumber = "";
       this.EmpObj.workState = 1;
       this.EmpObj.citizenIdentityCode = "";
       this.EmpObj.citizebIdentityPlace = "";
-      this.EmpObj.citizebIdentityDate = null;
-      this.EmpObj.passWord = "";
+      this.EmpObj.citizebIdentityDate = "2021-02-23T17:15:43.106Z";
+      this.EmpObj.password = "";
+      this.confirmPassword = "";
     },
   },
 };

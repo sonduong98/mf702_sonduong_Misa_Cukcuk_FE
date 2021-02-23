@@ -48,4 +48,8 @@ a {
   color: #fff;
   text-decoration: none;
 }
+a:hover {
+  color: #fff !important;
+  text-decoration: none;
+}
 </style>

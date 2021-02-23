@@ -33,6 +33,7 @@
   font-weight: 600;
   border-right: solid 2px #e5e5e5;
   height: 100%;
+  min-height: 100vh;
   transition: width 1s;
   opacity: 1;
   background-color: #0973b9;
